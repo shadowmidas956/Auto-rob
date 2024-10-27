@@ -1,0 +1,238 @@
+local TASERLVL = "1"
+local CUFFLVL = "1"
+local ARRESTCOOLDOWN = 15
+warn("Force Arrest started")
+
+
+local plrTable = {}
+local DidRun = false
+
+--ADD KILLAURA TO PREVENT RESCUE
+
+function find(table, element)
+  for i, value in pairs(table) do
+    if value == element then
+      return i
+    end
+  end
+  return nil
+end
+
+function contains(table, element)
+  for _, value in pairs(table) do
+    if value == element then
+      return true
+    end
+  end
+  return false
+end
+
+function add(plr)
+	if not contains(plrTable, plr.Name) then
+		table.insert(plrTable, plr.Name)
+	end
+end
+
+function remove(plr)
+	table.remove(plrTable, find(plrTable, plr.Name))
+end
+
+local function findPlayersInRange(tar, range)
+	if not range then range = ranger end
+	local s,r = pcall(function()
+    	for _, player in pairs(game.Players:GetPlayers()) do
+        	-- calculate the distance between the center player and the current player
+        	local distance = (player.Character.HumanoidRootPart.Position - tar.Character.HumanoidRootPart.Position).Magnitude
+		
+        	-- check if the player is within range
+        	if distance <= range then
+        	    -- execute the desired function on the player
+        	    if player.Name == tar.Name or player.Name == game.Players.LocalPlayer.Name then
+        	    	
+        	    else 
+        	    	if player.Team.Name == "Police" then
+        	    	
+        	    	else
+        	    		print("[AntiRescue]: Nearby killed: "..player.Name.." | Target: "..tar.Name)
+        	    		kill(player)
+        	    	end
+        	    end
+        	end
+    	end
+    end)
+end
+
+
+--KILLAURA END
+
+local get = getrawmetatable(game)
+setreadonly(get,false)
+local ex = game:GetService("ReplicatedStorage").DefaultChatSystemChatEvents.SayMessageRequest
+local old = get.__namecall
+get.__namecall = newcclosure(function(Self,...)
+    local args = ...
+    local namecall = getnamecallmethod()
+    if namecall == "FireServer" then
+        if Self ~= ex then 
+        local welf = table.unpack(args)
+        if welf == "KickPlayer" then 
+            return
+            end 
+        if welf == "NameTagType" then
+            tp(cf(2064.90234, 194.404709, -158.793533, 0.18739149, -2.49289176e-08, 0.982285321, -2.25417666e-12, 1, 2.53789203e-08, -0.982285321, -4.75800777e-09, 0.18739149))
+        end 
+end
+    end 
+    return old(Self,...)
+end)
+
+-- set the range you want to get players from
+local ranger = 20
+local modul = require(game:GetService("ReplicatedStorage").ClientModuleStorage.FunctionStorage_Module)
+-- define the function you want to execute on each player
+function kill(x)
+fireclickdetector(game:GetService("Workspace").Item.Melee_Police.Police_Melee_5.ClickDetector)
+
+x = x.Character
+while x.Humanoid.Health > 0 do
+            game:GetService("ReplicatedStorage").RemoteEvent:FireServer({"PlayerDidMeleeAttack"})
+            for i,y in pairs(debug.getupvalues(modul.MeleeAttack)) do 
+                if i == 7 then 
+                    FOUNDNUM = string.reverse(y) * 69 * 69 * 255
+                end 
+            end 
+            game:GetService("ReplicatedStorage").RemoteEvent:FireServer({"MeleeAttack",game:GetService("Players").LocalPlayer.Backpack.Police_Melee_5.Hitbox,x.Humanoid,FOUNDNUM,nil,0.5,5})
+        wait(0.3)
+        end 
+end
+
+
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(1900.52893, 190.554016, 62.4932671, 1, 0, 0, 0, 1, 0, 0, 0, 1) --- tp character to a spot where no one can kill
+    game.Players.LocalPlayer.Character.Humanoid.WalkToPoint = Vector3.new(0,0,1)
+    wait(1.5)
+    game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = 0
+    for i,x in pairs(game.Players.LocalPlayer.Character:GetChildren()) do ---freezes the character
+        if x.ClassName == "MeshPart" then 
+            x.Anchored = true 
+        end 
+    end 
+    wait()
+    local root = game.Players.LocalPlayer.Character.HumanoidRootPart
+    root:BreakJoints()
+    fireclickdetector(game:GetService("Workspace").Item["Armor_Police"].Armor.ClickDetector)
+    local box = Instance.new("SelectionBox")
+    box.Parent = root 
+    box.Adornee = root
+    wait(0.1)
+    fixer = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame 
+    fireclickdetector(game:GetService("Workspace").Item["Melee_Police"]["Police_Melee_5"].ClickDetector)
+function arrest(TARGET)
+local pos
+local player = game.Players.LocalPlayer.Name
+local cuff = Game:GetService("Players"):FindFirstChild(player).Backpack["Police_Handcuffs_"..CUFFLVL]
+local taser = game:GetService("Players").LocalPlayer.Backpack:FindFirstChild("Police_Taser_"..TASERLVL)
+taser.Parent = game.Players.LocalPlayer.Character
+pos = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame
+local args = {
+    [1] = {
+        [1] = "GunFire",
+        [2] = game.Players:FindFirstChild(TARGET).Character.HumanoidRootPart.CFrame + Vector3.new(0.1,0,0),
+        [3] = game:GetService("Players").LocalPlayer.Character:FindFirstChild("Police_Taser_"..TASERLVL)
+    }
+}
+
+game:GetService("ReplicatedStorage"):WaitForChild("RemoteEvent"):FireServer(unpack(args))
+
+
+game:GetService("ReplicatedStorage").RemoteEvent:FireServer({
+        "DoGunDmg",
+        workspace:FindFirstChild(TARGET).HumanoidRootPart.CFrame.Position + Vector3.new(0.1,0,0),
+        workspace:FindFirstChild(TARGET),
+        false,
+        1,
+        workspace:FindFirstChild(TARGET).HumanoidRootPart.CFrame.Position + Vector3.new(0.1,0,0),
+        0,
+        workspace:FindFirstChild(TARGET).HumanoidRootPart,
+        workspace[player]:FindFirstChild("Police_Taser_"..TASERLVL).Tip --- needs to be the path of the taser in workspace not through player
+        })
+        
+
+
+taser.Parent = game.Players.LocalPlayer.Backpack
+cuff.Parent = game.Players.LocalPlayer.Character
+
+wait(1)
+local suc, res = pcall(function()
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = workspace:FindFirstChild(TARGET).HumanoidRootPart.CFrame
+end)
+wait(0.5)
+game:GetService("ReplicatedStorage").RemoteEvent:FireServer({
+        "Arrest",
+        Game:GetService("Workspace"):FindFirstChild(player)["Police_Handcuffs_"..CUFFLVL].Handle,
+        Game:GetService("Workspace"):FindFirstChild(TARGET),
+        ARRESTCOOLDOWN,
+        5
+        })
+wait(1)
+cuff.Parent = game.Players.LocalPlayer.Backpack
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = pos
+if tostring(taser.Tip.Ammo.Value) == ("0" or "-1" or "1-")  then
+	taser.Parent = game:GetService("Players").LocalPlayer.Character
+	local args = {
+    [1] = {
+        [1] = "GunReload",
+        [2] = game:GetService("Players").LocalPlayer.Character:FindFirstChild("Police_Taser_"..TASERLVL)
+    }
+}
+wait(2)
+game:GetService("ReplicatedStorage"):WaitForChild("RemoteEvent"):FireServer(table.unpack(args))
+taser.Parent = game.Players.LocalPlayer.Backpack
+end
+warn("Arrested "..TARGET)
+end
+local function RemoveFromPlrTable(plr, i)
+  wait(13) -- simulate a long-running operation
+  remove(plr.Name, i)
+end
+
+while wait(0.2) do
+	for i,kid in pairs(game.Players:GetPlayers()) do
+		for i,plr in pairs(plrTable) do
+			local plr = game.Players:FindFirstChild(plr)
+			if plr and plr.Name ~= nil then
+				if plr.Name == game.Players.LocalPlayer.Name then continue end
+				if plr.Name == kid.Name then continue end
+				-- So basically this is it oÂ´i guess only gotta find yout how to work async
+				coroutine.wrap(RemoveFromPlrTable)(plr)
+				findPlayersInRange(plr, 5)
+			end
+		end
+		if kid.Name == game.Players.LocalPlayer.Name then continue end
+		local character = kid.Character
+			if kid and kid.Character then
+				if character and character:FindFirstChild("Head") and character.Head:FindFirstChild("Wanted_BBGui") then
+					
+					if not contains(plrTable, kid.Name) then
+						arrest(kid.Name)
+						add(kid)
+						DidRun = true
+					end
+					--wait(ARRESTCOOLDOWN)
+					--character.Head:FindFirstChild("Wanted_BBGui"):Destroy()
+				else if character and character:FindFirstChild("Humanoid") and game:GetService("CollectionService"):HasTag(character.Humanoid, "BadPrisoner") then
+					
+					if not contains(plrTable, kid.Name) then
+						arrest(kid.Name)
+						add(kid)
+						DidRun = true
+					end
+					--wait(ARRESTCOOLDOWN)
+				end
+			end
+		end
+	end
+	if DidRun == true then
+		table.foreach(plrTable, print)
+		DidRun = false
+	end
+end
